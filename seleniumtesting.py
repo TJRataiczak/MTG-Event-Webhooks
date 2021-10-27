@@ -8,20 +8,20 @@ import sqlite3
 conn = sqlite3.connect("discordbot.db")
 c = conn.cursor()
 
+c.execute("DELETE FROM events WHERE serverID = '863187370119659560'")
+
 driver = webdriver.Firefox()
 driver.get("https://locator.wizards.com/store/12723")
 
 myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
 
 eventnames = driver.find_elements_by_class_name("event-name")
-companioncodes = driver.find_elements_by_class_name("row.no-gutters.pt-1.event-info")
-daysofweek = driver.find_elements_by_class_name("dayOfWeek.text-center")
 months = driver.find_elements_by_class_name("month.text-center")
 daysofmonth = driver.find_elements_by_class_name("dayOfMonth.text-center")
 
 for i in range(len(eventnames)):
     print(eventnames[i].text.lower())
-    finaleventdate = f"{daysofweek[i].text}, {months[i].text} {daysofmonth[i].text}"
+    finaleventdate = f"{months[i].text} {daysofmonth[i].text}"
     print(finaleventdate)
     if "modern" in eventnames[i].text.lower():
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Modern')")
@@ -31,6 +31,10 @@ for i in range(len(eventnames)):
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Pioneer')")
     elif "legacy" in eventnames[i].text.lower():
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Legacy')")
+    elif "sealed" in eventnames[i].text.lower():
+        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Sealed')")
+    elif "draft" in eventnames[i].text.lower():
+        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Draft')")
     else:
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}') SELECT serverID, eventname, eventdate")
 
