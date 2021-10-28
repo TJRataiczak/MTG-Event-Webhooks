@@ -47,31 +47,30 @@ def eventbuilder(ctx):
     conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
     c = conn.cursor()
 
-    match ctx.message.content:
-        case "!events":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}'")
-            results = c.fetchall()
-        case "!pioneer":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Pioneer'")
-            results = c.fetchall()
-        case "!modern":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Modern'")
-            results = c.fetchall()
-        case "!standard":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Standard'")
-            results = c.fetchall()
-        case "!legacy":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Legacy'")
-            results = c.fetchall()
-        case "!sealed":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Sealed'")
-            results = c.fetchall()
-        case "!draft":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Draft'")
-            results = c.fetchall()
-        case "!prerelease":
-            c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Prerelease'")
-            results = c.fetchall()
+    if ctx.message.content == "!events":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}'")
+        results = c.fetchall()
+    elif ctx.message.content == "!pioneer":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Pioneer'")
+        results = c.fetchall()
+    elif ctx.message.content == "!modern":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Modern'")
+        results = c.fetchall()
+    elif ctx.message.content == "!standard":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Standard'")
+        results = c.fetchall()
+    elif ctx.message.content == "!legacy":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Legacy'")
+        results = c.fetchall()
+    elif ctx.message.content == "!sealed":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Sealed'")
+        results = c.fetchall()
+    elif ctx.message.content == "!draft":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Draft'")
+        results = c.fetchall()
+    elif ctx.message.content == "!prerelease":
+        c.execute(f"SELECT * FROM events WHERE serverID = '{ctx.guild.id}' AND eventformat = 'Prerelease'")
+        results = c.fetchall()
     
     conn.close()
     reply = ""

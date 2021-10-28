@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -14,8 +16,11 @@ results = c.fetchall()
 
 for result in results:
     c.execute(f"DELETE FROM events WHERE serverID = '{result[0]}'")
-    print(results)
-    driver = webdriver.Firefox()
+
+    options = Options()
+    options.headless = True
+    s = Service("/home/tjrataiczak/mtghelper/geckodriver")
+    driver = webdriver.Firefox(options=options, service=s)
     driver.get(f"https://locator.wizards.com/store/{result[1]}")
 
     myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
