@@ -8,15 +8,15 @@ import sqlite3
 conn = sqlite3.connect("discordbot.db")
 c = conn.cursor()
 
-c.execute("DELETE FROM events WHERE serverID = '863187370119659560'")
-
 c.execute("SELECT serverID, storeID FROM servers")
 
 results = c.fetchall()
 
 for result in results:
+    c.execute(f"DELETE FROM events WHERE serverID = '{result[0]}'")
+    print(results)
     driver = webdriver.Firefox()
-    driver.get("https://locator.wizards.com/store/12723")
+    driver.get(f"https://locator.wizards.com/store/{result[1]}")
 
     myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
 
