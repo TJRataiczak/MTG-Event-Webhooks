@@ -10,36 +10,41 @@ c = conn.cursor()
 
 c.execute("DELETE FROM events WHERE serverID = '863187370119659560'")
 
-driver = webdriver.Firefox()
-driver.get("https://locator.wizards.com/store/12723")
+c.execute("SELECT serverID, storeID FROM servers")
 
-myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
+results = c.fetchall()
 
-eventnames = driver.find_elements_by_class_name("event-name")
-months = driver.find_elements_by_class_name("month.text-center")
-daysofmonth = driver.find_elements_by_class_name("dayOfMonth.text-center")
+for result in results:
+    driver = webdriver.Firefox()
+    driver.get("https://locator.wizards.com/store/12723")
 
-for i in range(len(eventnames)):
-    print(eventnames[i].text)
-    finaleventdate = f"{months[i].text} {daysofmonth[i].text}"
-    print(finaleventdate)
-    if "modern" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Modern')")
-    elif "standard" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Standard')")
-    elif "pioneer" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Pioneer')")
-    elif "legacy" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Legacy')")
-    elif "sealed" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Sealed')")
-    elif "draft" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Draft')")
-    elif "prerelease" in eventnames[i].text.lower():
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Prerelease')")
-    else:
-        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}') SELECT serverID, eventname, eventdate")
+    myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
+
+    eventnames = driver.find_elements_by_class_name("event-name")
+    months = driver.find_elements_by_class_name("month.text-center")
+    daysofmonth = driver.find_elements_by_class_name("dayOfMonth.text-center")
+
+    for i in range(len(eventnames)):
+        print(eventnames[i].text)
+        finaleventdate = f"{months[i].text} {daysofmonth[i].text}"
+        print(finaleventdate)
+        if "modern" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Modern')")
+        elif "standard" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Standard')")
+        elif "pioneer" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Pioneer')")
+        elif "legacy" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Legacy')")
+        elif "sealed" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Sealed')")
+        elif "draft" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Draft')")
+        elif "prerelease" in eventnames[i].text.lower():
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Prerelease')")
+        else:
+            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}') SELECT serverID, eventname, eventdate")
+    driver.close()
 
 conn.commit()
 conn.close()
-driver.close()
