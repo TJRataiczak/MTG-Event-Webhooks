@@ -20,7 +20,7 @@ months = driver.find_elements_by_class_name("month.text-center")
 daysofmonth = driver.find_elements_by_class_name("dayOfMonth.text-center")
 
 for i in range(len(eventnames)):
-    print(eventnames[i].text.lower())
+    print(eventnames[i].text)
     finaleventdate = f"{months[i].text} {daysofmonth[i].text}"
     print(finaleventdate)
     if "modern" in eventnames[i].text.lower():
@@ -35,6 +35,8 @@ for i in range(len(eventnames)):
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Sealed')")
     elif "draft" in eventnames[i].text.lower():
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Draft')")
+    elif "prerelease" in eventnames[i].text.lower():
+        c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}', 'Prerelease')")
     else:
         c.execute(f"INSERT INTO events VALUES ('863187370119659560', '{eventnames[i].text}', '{finaleventdate}') SELECT serverID, eventname, eventdate")
 

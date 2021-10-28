@@ -9,11 +9,12 @@ c = conn.cursor()
 # )""")
 
 
-# c.execute("INSERT INTO servers VALUES ('863187370119659560', '12723')")
+c.execute("UPDATE servers SET website = 'https://www.apexgaming.gg/' WHERE serverID = '863187370119659560' ")
 
-# c.execute("PRAGMA table_info(events)")
+# c.execute("""ALTER TABLE servers
+#             ADD website text""")
 
-c.execute("SELECT * FROM events")
+c.execute("SELECT * FROM servers")
 
 # c.execute("DELETE FROM events")
 

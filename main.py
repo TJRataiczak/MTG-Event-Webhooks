@@ -1,7 +1,6 @@
+from nextcord.ext import commands
 from dotenv import load_dotenv
 import os
-import nextcord
-from nextcord.ext import commands
 
 load_dotenv()
 
@@ -10,7 +9,7 @@ client = commands.Bot(command_prefix=os.getenv("DISCORD_PREFIX"))
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
-    # await client.change_presence(activity=nextcord.Game("Bricker"))
+    # await client.change_presence(activity=nextcord.Game("Bricker's Balls"))
 
 for filename in os.listdir("cogs"):
     if filename.endswith(".py"):
