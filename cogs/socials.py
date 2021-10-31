@@ -1,5 +1,4 @@
-from nextcord import message
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 import sqlite3
 from dotenv import load_dotenv
 import os
@@ -7,6 +6,7 @@ import os
 class Socials(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.socialupdate.start()
 
     @commands.command()
     async def youtube(self, ctx):
@@ -27,6 +27,10 @@ class Socials(commands.Cog):
     @commands.command()
     async def website(self, ctx):
         await ctx.send(socialbuilder(ctx))
+    
+    @tasks.loop(minutes=1)
+    async def socialupdate(self):
+        print("Bot is still running.")
 
 def setup(bot):
     bot.add_cog(Socials(bot))
