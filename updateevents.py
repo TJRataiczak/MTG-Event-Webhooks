@@ -19,7 +19,7 @@ for result in results:
 
     options = Options()
     options.headless = True
-    s = Service("/home/tjrataiczak/mtghelper/geckodriver")
+    s = Service("D:\Windows Files\Documents\GitHub\MTG-Helper-Bot\geckodriver.exe")
     driver = webdriver.Firefox(options=options, service=s)
     driver.get(f"https://locator.wizards.com/store/{result[1]}")
 
