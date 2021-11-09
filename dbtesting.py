@@ -1,13 +1,11 @@
 import sqlite3
 
-conn = sqlite3.connect('discordbot.db')
+conn = sqlite3.connect('mtg.db')
 c = conn.cursor()
 
 c.execute("SELECT * FROM events")
 
-for event in c.fetchall():
-    print(event)
-
+print(c.fetchall())
 conn.commit()
 
 conn.close()

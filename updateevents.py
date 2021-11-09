@@ -1,55 +1,65 @@
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import datetime
 import sqlite3
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-conn = sqlite3.connect("discordbot.db")
+def month_to_num(long_month):
+    return {
+        "January": "1",
+        "February": "2",
+        "March": "3",
+        "April": "4",
+        "May": "5",
+        "June": "6",
+        "July": "7",
+        "August": "8",
+        "September": "9",
+        "October": "10",
+        "November": "11",
+        "December": "12"
+    }[long_month]
+
+current_date = datetime.datetime.now()
+
+conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
 c = conn.cursor()
 
-c.execute("SELECT serverID, storeID FROM servers")
+c.execute("SELECT storeid, wizardsid FROM stores")
 
-results = c.fetchall()
+stores = c.fetchall()
 
-for result in results:
-    c.execute(f"DELETE FROM events WHERE serverID = '{result[0]}'")
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options)
 
-    options = Options()
-    options.headless = True
-    s = Service("D:\Windows Files\Documents\GitHub\MTG-Helper-Bot\geckodriver.exe")
-    driver = webdriver.Firefox(options=options, service=s)
-    driver.get(f"https://locator.wizards.com/store/{result[1]}")
+for store in stores:
+
+    c.execute(f"DELETE FROM events WHERE storeid='{store[0]}'")
+
+    driver.get(store[1])
 
     myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
 
-    eventnames = driver.find_elements_by_class_name("event-name")
-    months = driver.find_elements_by_class_name("month.text-center")
-    daysofmonth = driver.find_elements_by_class_name("dayOfMonth.text-center")
+    event_names = driver.find_elements(By.CSS_SELECTOR, "span.event-name")
+    months = driver.find_elements(By.CSS_SELECTOR, "div.month.text-center")
+    days_of_the_month = driver.find_elements(By.CSS_SELECTOR, "div.dayOfMonth.text-center")
+    descriptions = driver.find_elements(By.CSS_SELECTOR, "div[itemprop='location performer'] > div:nth-child(1)")
 
-    for i in range(len(eventnames)):
-        print(eventnames[i].text)
-        finaleventdate = f"{months[i].text} {daysofmonth[i].text}"
-        print(finaleventdate)
-        if "modern" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Modern')")
-        elif "standard" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Standard')")
-        elif "pioneer" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Pioneer')")
-        elif "legacy" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Legacy')")
-        elif "sealed" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Sealed')")
-        elif "draft" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Draft')")
-        elif "prerelease" in eventnames[i].text.lower():
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}', 'Prerelease')")
-        else:
-            c.execute(f"INSERT INTO events VALUES ('{result[0]}', '{eventnames[i].text}', '{finaleventdate}') SELECT serverID, eventname, eventdate")
+
+    for i in range(len(event_names)):
+        year = current_date.year
+        if month_to_num(months[i].text) < month_to_num(months[0].text):
+            year += 1
+        c.execute(f"INSERT INTO events VALUES ('{store[0]}', '{event_names[i].text}', '{year}-{month_to_num(months[i].text)}-{days_of_the_month[i].text}', '{descriptions[i].text}')")
     driver.close()
+    print(f"Stored all events for: {store[0]}")
 
 conn.commit()
 conn.close()
