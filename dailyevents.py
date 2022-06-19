@@ -2,36 +2,32 @@ from os import name
 from discord_webhook import DiscordWebhook, DiscordEmbed
 import sqlite3
 import datetime
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 today = datetime.date.today()
 
 #Open connection to database and grab all stores to iterate through
-conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
+conn = sqlite3.connect("apexgamingesports.db")
 c = conn.cursor()
-c.execute("SELECT webhookid, storeid, storeimage FROM stores")
 
-for store in c.fetchall():
-    #Start webhook
-    webhook = DiscordWebhook(url=store[0], username=f"{store[1]} Events", avatar_url=store[2])
-    embed = DiscordEmbed(title="Today's Events")
-    c.execute(f"SELECT eventdate, eventid, eventdescription FROM events WHERE eventdate='{today}'")
-    events = c.fetchall()
-    #Add event(s) for the day posts none if no events
-    if events != []:
-        for event in events:
-            number_date = event[0].split("-")
-            string_date = datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]))
-            embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[1]}\n{event[2]}")
-    else:
-        embed.add_embed_field(name=f"{today.strftime('%B %d')}", value="No events for today")
+#Start webhook
+webhook = DiscordWebhook(url="https://discordapp.com/api/webhooks/900858509590167582/shPEFnJDSKtjUZXFrRw2mUMCJpxPd42Zo3yQsENJM6An5bklyp0Fokrb29GEpjpCSaCI", username=f"Apex Gaming Events")
+embed = DiscordEmbed(title="Today's Events")
+c.execute(f"SELECT * FROM events WHERE date = '{today}'")
+events = c.fetchall()
+#Add event(s) for the day posts none if no events
+if events != []:
+    for event in events:
+        number_date = event[1].split("-")
+        string_date = datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]))
+        if(len(event[2]) == 6 or len(event[2]) == 7):
+            embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[0]}\n{event[3]}\nCompanion Code: {event[2]}", inline = False)
+        else:
+            embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[0]}\n{event[3]}", inline = False)            
+else:
+    embed.add_embed_field(name=f"{today.strftime('%B %d')}", value="No events for today")
     
-    #Post embed to webhook
-    webhook.add_embed(embed)
-    webhook.execute()
-    print(f"Posted events to: {store[1]}")
+#Post embed to webhook
+webhook.add_embed(embed)
+webhook.execute()
 
 conn.close()
