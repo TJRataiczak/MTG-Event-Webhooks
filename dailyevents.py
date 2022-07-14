@@ -10,7 +10,7 @@ conn = sqlite3.connect("apexgamingesports.db")
 c = conn.cursor()
 
 #Start webhook
-webhook = DiscordWebhook(url="https://discordapp.com/api/webhooks/900858509590167582/shPEFnJDSKtjUZXFrRw2mUMCJpxPd42Zo3yQsENJM6An5bklyp0Fokrb29GEpjpCSaCI", username=f"Apex Gaming Events")
+webhook = DiscordWebhook(url="https://discordapp.com/api/webhooks/988274101112160288/OhZLBf1L5DSQU-vPDa7_vpWr-kVlrbTPaZODOKazoR6TIWBOxsiYXq5q7lSsXTiSAsQJ", username=f"Apex Gaming Events")
 embed = DiscordEmbed(title="Today's Events")
 c.execute(f"SELECT * FROM events WHERE date = '{today}'")
 events = c.fetchall()
