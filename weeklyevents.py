@@ -16,17 +16,16 @@ embed = DiscordEmbed(title="Weekly Events")
 count = 0
 for day in week:
     #Add event for every day of the week to embed
-    print(day)
-    c.execute(f"SELECT * FROM events WHERE date={day}")
-    print(c.fetchall())
+    c.execute(f"SELECT * FROM events WHERE date='{day}'")
+    events = c.fetchall()
 
-    # if events != []:
-    #     for event in events:
-    #         number_date = event[0].split("-")
-    #         string_date = datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]))
-    #         embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[1]}\n{event[2]}")   
-    # else:
-    #     count += 1
+    if events != []:
+        for event in events:
+            number_date = event[1].split("-")
+            string_date = datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]))
+            embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[0]}\n{event[2]}\n{event[3]}")   
+    else:
+        count += 1
     
 #If no events for the week post nothing
 if count == 7:
