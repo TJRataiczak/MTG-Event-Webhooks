@@ -1,17 +1,21 @@
 from discord_webhook import DiscordWebhook, DiscordEmbed
 import sqlite3
 import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 #Set today's date and setup week
 today = datetime.date.today()
 week = [today + datetime.timedelta(days=i) for i in range(7)]
 
 #Open connection to database and grab all stores to iterate through
-conn = sqlite3.connect("apexgamingesports.db")
+conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
 c = conn.cursor()
 
 #Start webhook
-webhook = DiscordWebhook(url="https://discordapp.com/api/webhooks/988274101112160288/OhZLBf1L5DSQU-vPDa7_vpWr-kVlrbTPaZODOKazoR6TIWBOxsiYXq5q7lSsXTiSAsQJ", username=f"Apex Gaming Events")
+webhook = DiscordWebhook(url=os.getenv("WEBHOOK_URL"), username=f"Apex Gaming Events")
 embed = DiscordEmbed(title="Weekly Events")
 count = 0
 for day in week:
@@ -22,8 +26,16 @@ for day in week:
     if events != []:
         for event in events:
             number_date = event[1].split("-")
-            string_date = datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]))
-            embed.add_embed_field(name=string_date.strftime("%B %d"), value=f"{event[0]}\n{event[2]}\n{event[3]}")   
+            time_of_day = event[3].split(":")
+            if "pm" in time_of_day[1] and "12" not in time_of_day[0]:
+                string_date = int(datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]), int(time_of_day[0]) + 12, int(time_of_day[1][0:2])).timestamp())
+            else:
+                string_date = int(datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]), int(time_of_day[0]), int(time_of_day[1][0:2])).timestamp())
+        
+            if(len(event[2]) == 6 or len(event[2]) == 7):
+                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>\nCompanion Code: {event[2]}", inline = False)
+            else:
+                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>", inline = False)    
     else:
         count += 1
     
@@ -37,3 +49,5 @@ webhook.execute()
 print(f"Posted events to: Apex Gaming")
 
 conn.close()
+
+print(string_date)

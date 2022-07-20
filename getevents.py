@@ -1,4 +1,3 @@
-from calendar import month
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,6 +5,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import datetime
 import sqlite3
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 def month_to_num(long_month):
@@ -26,14 +29,14 @@ def month_to_num(long_month):
 
 current_date = datetime.datetime.now()
 
-conn = sqlite3.connect("apexgamingesports.db")
+conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
 c = conn.cursor()
 
 options = Options()
 options.headless = True
-driver = webdriver.Firefox(options=options, executable_path="C:\Program Files\geckodriver.exe")
+driver = webdriver.Firefox(options = options)
 
-driver.get("https://locator.wizards.com/store/12723")
+driver.get(os.getenv("EVENT_LOCATOR_URL"))
 
 myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
 
@@ -50,6 +53,9 @@ for event_name, event_time, event_description, event_month, event_day in zip(eve
     if month_to_num(event_month.text) < month_to_num(event_month.text):
         year += 1
     c.execute(f"INSERT INTO events VALUES ('{event_name.text}', '{year}-{month_to_num(event_month.text)}-{event_day.text}', '{event_description.text}', '{event_time.text}')")
+    print(f"Adding: {event_name.text} to database")
+
+print("All events added successfully.")
 
 driver.close()
 conn.commit()
