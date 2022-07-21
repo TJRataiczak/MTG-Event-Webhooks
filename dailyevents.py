@@ -14,7 +14,7 @@ c = conn.cursor()
 
 #Start webhook
 webhook = DiscordWebhook(url=os.getenv("WEBHOOK_URL"), username=f"Apex Gaming Events")
-embed = DiscordEmbed(title="Today's Events")
+embed = DiscordEmbed(title="Today's Events", url = os.getenv("EVENT_LOCATOR_URL"), color = 242424)
 c.execute(f"SELECT * FROM events WHERE date = '{today}'")
 events = c.fetchall()
 #Add event(s) for the day posts none if no events

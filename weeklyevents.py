@@ -16,7 +16,7 @@ c = conn.cursor()
 
 #Start webhook
 webhook = DiscordWebhook(url=os.getenv("WEBHOOK_URL"), username=f"Apex Gaming Events")
-embed = DiscordEmbed(title="Weekly Events")
+embed = DiscordEmbed(title="Weekly Events", url = os.getenv("EVENT_LOCATOR_URL"), color = 242424)
 count = 0
 for day in week:
     #Add event for every day of the week to embed
