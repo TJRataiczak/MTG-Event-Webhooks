@@ -10,7 +10,6 @@ import os
 
 load_dotenv()
 
-
 def month_to_num(long_month):
     return {
         "January": "01",
@@ -33,18 +32,18 @@ conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
 c = conn.cursor()
 
 options = Options()
-options.headless = True
+# options.headless = True
 driver = webdriver.Firefox(options = options)
 
 driver.get(os.getenv("EVENT_LOCATOR_URL"))
 
-myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek.text-center")))
+myElem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "dayOfWeek")))
 
-event_names = driver.find_elements(By.CSS_SELECTOR, "span.event-name")
-event_times = driver.find_elements(By.CSS_SELECTOR, "div.event-time")
-event_descriptions = driver.find_elements(By.CSS_SELECTOR, "div[itemprop='location performer'] > div:nth-child(2)")
-event_months = driver.find_elements(By.CSS_SELECTOR, "div.month.text-center")
-event_days = driver.find_elements(By.CSS_SELECTOR, "div.dayOfMonth.text-center")
+event_names = driver.find_elements(By.CLASS_NAME, "event-name")
+event_times = driver.find_elements(By.CLASS_NAME, "event-time")
+event_descriptions = driver.find_elements(By.CLASS_NAME, "e-description")
+event_months = driver.find_elements(By.CLASS_NAME, "month")
+event_days = driver.find_elements(By.CLASS_NAME, "dayOfMonth")
 
 c.execute(f"DELETE FROM events")
 

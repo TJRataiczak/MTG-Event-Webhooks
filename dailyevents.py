@@ -35,6 +35,10 @@ else:
     embed.add_embed_field(name=f"{today.strftime('%B %d')}", value="No events for today")
     
 #Post embed to webhook
+with open("images/logo.png", "rb") as f:
+    webhook.add_file(file=f.read(), filename="logo.png")
+
+embed.set_thumbnail(url="attachment://logo.png")
 webhook.add_embed(embed)
 webhook.execute()
 

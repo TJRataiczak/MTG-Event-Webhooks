@@ -33,9 +33,9 @@ for day in week:
                 string_date = int(datetime.datetime(int(number_date[0]), int(number_date[1]), int(number_date[2]), int(time_of_day[0]), int(time_of_day[1][0:2])).timestamp())
         
             if(len(event[2]) == 6 or len(event[2]) == 7):
-                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>\nCompanion Code: {event[2]}", inline = False)
+                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>\nCompanion Code: {event[2]}", inline = True)
             else:
-                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>", inline = False)    
+                embed.add_embed_field(name=event[0], value=f"<t:{string_date}>", inline = True)
     else:
         count += 1
     
@@ -44,10 +44,12 @@ if count == 7:
     embed.add_embed_field(name=f"{today.strftime('%B %d')}-{week[-1].strftime('%B %d')}", value="No events for the week")
 
 #Post embed to webhook
+with open("images/logo.png", "rb") as f:
+    webhook.add_file(file=f.read(), filename="logo.png")
+
+embed.set_thumbnail(url="attachment://logo.png")
 webhook.add_embed(embed)
 webhook.execute()
 print(f"Posted events to: Apex Gaming")
 
 conn.close()
-
-print(string_date)
