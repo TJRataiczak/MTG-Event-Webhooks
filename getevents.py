@@ -25,6 +25,10 @@ def month_to_num(long_month):
         "December": "12"
     }[long_month]
 
+from pyvirtualdisplay import Display
+display = Display(visible=0, size=(800, 600))
+display.start()
+
 current_date = datetime.datetime.now()
 
 conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
