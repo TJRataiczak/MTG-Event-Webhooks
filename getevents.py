@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -31,9 +30,7 @@ current_date = datetime.datetime.now()
 conn = sqlite3.connect(os.getenv("DATABASE_PATH"))
 c = conn.cursor()
 
-options = Options()
-# options.headless = True
-driver = webdriver.Firefox(options = options)
+driver = webdriver.Chrome()
 
 driver.get(os.getenv("EVENT_LOCATOR_URL"))
 
@@ -45,7 +42,7 @@ event_descriptions = driver.find_elements(By.CLASS_NAME, "e-description")
 event_months = driver.find_elements(By.CLASS_NAME, "month")
 event_days = driver.find_elements(By.CLASS_NAME, "dayOfMonth")
 
-c.execute(f"DELETE FROM events")
+c.execute("DELETE FROM events")
 
 for event_name, event_time, event_description, event_month, event_day in zip(event_names, event_times, event_descriptions, event_months, event_days):
     year = current_date.year
